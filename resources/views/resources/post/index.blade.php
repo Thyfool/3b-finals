@@ -60,11 +60,51 @@
                                             <td>
                                             <a href="{{ route('post.show', $post) }}" class="btn btn-dark m-1" fdprocessedid="sh46d8"><i class="bi bi-folder-symlink"></i></a>
                                             <a href="{{ route('post.edit', $post) }}" type="button" class="btn btn-success m-1" fdprocessedid="sh46d8"><i class="bi bi-pencil-square"></i></a>
-                                            <form action="{{ route('post.destroy', $post->id) }}" method="post">
+                                            <form id="deleteForm{{$post->id}}" action="{{ route('post.destroy', $post->id) }}" method="post">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger m-1" fdprocessedid="sh46d8"><i class="bi bi-trash-fill"></i></button>
+                                                <button type="button" class="btn btn-danger m-1 delete-button" data-postid="{{$post->id}}"><i class="bi bi-trash-fill"></i></button>
                                             </form>
+
+                                            <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Are you sure you want to delete this post?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <form id="deletePostForm" method="POST" action="">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-primary"><i class="bi bi-trash-fill"></i>Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    var deleteButtons = document.querySelectorAll('.delete-button');
+                                                    var deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+
+                                                    deleteButtons.forEach(function(button) {
+                                                        button.addEventListener('click', function() {
+                                                            var postId = this.getAttribute('data-postid');
+                                                            var deleteForm = document.getElementById('deleteForm' + postId);
+                                                            var actionUrl = deleteForm.getAttribute('action');
+                                                            document.getElementById('deletePostForm').setAttribute('action', actionUrl);
+                                                            deleteModal.show();
+                                                        });
+                                                    });
+                                                });
+                                            </script>
+
+
                                             </td>                  
                                         </tr>
                                     @endforeach   
